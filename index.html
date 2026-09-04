@@ -311,133 +311,6 @@ body.style3 p {
   100% { width: 100%; }
 }
 
-/* QR Code Button */
-.qr-button {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #ff9de2, #c471f5);
-  border: none;
-  cursor: pointer;
-  font-size: 28px;
-  box-shadow: 0 0 30px rgba(255, 157, 226, 0.5);
-  transition: all 0.3s ease;
-  z-index: 999;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.qr-button:hover {
-  transform: scale(1.1);
-  box-shadow: 0 0 40px rgba(255, 157, 226, 0.8);
-}
-
-/* QR Code Modal */
-.qr-modal {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.8);
-  backdrop-filter: blur(5px);
-  z-index: 2000;
-  justify-content: center;
-  align-items: center;
-}
-
-.qr-modal.active {
-  display: flex;
-}
-
-.qr-content {
-  background: rgba(20, 5, 40, 0.95);
-  border-radius: 30px;
-  padding: 40px;
-  border: 2px solid rgba(255, 157, 226, 0.5);
-  box-shadow: 0 0 50px rgba(255, 157, 226, 0.3);
-  text-align: center;
-  animation: popIn 0.3s ease;
-}
-
-@keyframes popIn {
-  0% { transform: scale(0.8) rotateZ(-5deg); opacity: 0; }
-  100% { transform: scale(1) rotateZ(0deg); opacity: 1; }
-}
-
-.qr-content h2 {
-  margin-bottom: 20px;
-  font-size: 28px;
-  background: linear-gradient(90deg, #fff, #ff9de2);
-  -webkit-background-clip: text;
-  color: transparent;
-}
-
-.qr-code-canvas {
-  background: white;
-  padding: 20px;
-  border-radius: 20px;
-  margin: 20px 0;
-  box-shadow: 0 0 30px rgba(255, 157, 226, 0.2);
-}
-
-.qr-url {
-  color: #00ffff;
-  font-size: 12px;
-  word-break: break-all;
-  margin: 15px 0;
-  padding: 10px;
-  background: rgba(0, 255, 255, 0.1);
-  border-radius: 10px;
-  font-family: 'Courier New', monospace;
-}
-
-.copy-btn {
-  background: linear-gradient(135deg, #ff9de2, #c471f5);
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 20px;
-  cursor: pointer;
-  font-weight: bold;
-  margin-top: 10px;
-  transition: all 0.3s ease;
-}
-
-.copy-btn:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 20px rgba(255, 157, 226, 0.6);
-}
-
-.close-qr {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  background: rgba(255, 255, 255, 0.1);
-  border: none;
-  color: white;
-  font-size: 32px;
-  cursor: pointer;
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease;
-  z-index: 2001;
-}
-
-.close-qr:hover {
-  background: rgba(255, 255, 255, 0.2);
-  transform: rotate(90deg);
-}
-
 @media (max-width: 600px) {
   .card {
     padding: 40px 20px;
@@ -462,22 +335,6 @@ body.style3 p {
   .style-btn {
     font-size: 11px;
     padding: 6px 12px;
-  }
-
-  .qr-button {
-    width: 50px;
-    height: 50px;
-    font-size: 24px;
-  }
-
-  .qr-content {
-    padding: 30px 20px;
-    margin: 20px;
-    max-width: 90vw;
-  }
-
-  .qr-content h2 {
-    font-size: 22px;
   }
 }
 </style>
@@ -507,21 +364,6 @@ body.style3 p {
     <div class="progress-fill"></div>
   </div>
 </div>
-
-<button class="qr-button" onclick="toggleQRModal()">📱</button>
-
-<div class="qr-modal" id="qrModal">
-  <button class="close-qr" onclick="toggleQRModal()">✕</button>
-  <div class="qr-content">
-    <h2>Scan to Share 💜</h2>
-    <p style="color: #d9c5f0; margin-bottom: 15px;">Share this greeting with anyone!</p>
-    <canvas id="qrCanvas" class="qr-code-canvas"></canvas>
-    <div class="qr-url" id="qrUrl"></div>
-    <button class="copy-btn" onclick="copyToClipboard()">📋 Copy Link</button>
-  </div>
-</div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
 <script>
 function setStyle(style) {
@@ -592,64 +434,6 @@ document.addEventListener('visibilitychange', () => {
     clearInterval(interval);
   } else {
     elapsed = 0;
-  }
-});
-
-// QR Code functionality
-function toggleQRModal() {
-  const modal = document.getElementById('qrModal');
-  modal.classList.toggle('active');
-  
-  if (modal.classList.contains('active')) {
-    generateQRCode();
-  }
-}
-
-function generateQRCode() {
-  const canvas = document.getElementById('qrCanvas');
-  const urlDisplay = document.getElementById('qrUrl');
-  
-  // Get current URL
-  const currentURL = window.location.href;
-  urlDisplay.textContent = currentURL;
-  
-  // Clear previous QR code
-  canvas.innerHTML = '';
-  
-  // Generate new QR code
-  const qr = new QRCode(canvas, {
-    text: currentURL,
-    width: 250,
-    height: 250,
-    colorDark: "#000000",
-    colorLight: "#ffffff",
-    correctLevel: QRCode.CorrectLevel.H
-  });
-}
-
-function copyToClipboard() {
-  const urlDisplay = document.getElementById('qrUrl');
-  const url = urlDisplay.textContent;
-  
-  navigator.clipboard.writeText(url).then(() => {
-    const btn = event.target;
-    const originalText = btn.textContent;
-    btn.textContent = '✓ Copied!';
-    btn.style.background = 'linear-gradient(135deg, #00ff00, #00cc00)';
-    
-    setTimeout(() => {
-      btn.textContent = originalText;
-      btn.style.background = 'linear-gradient(135deg, #ff9de2, #c471f5)';
-    }, 2000);
-  }).catch(err => {
-    alert('Failed to copy: ' + err);
-  });
-}
-
-// Close modal on outside click
-document.getElementById('qrModal').addEventListener('click', (e) => {
-  if (e.target.id === 'qrModal') {
-    toggleQRModal();
   }
 });
 </script>
